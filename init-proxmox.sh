@@ -4,6 +4,7 @@ sed -i "s/^#HandleLidSwitch\([a-zA-Z]*\)=[a-z]*/HandleLidSwitch\1=ignore/" /etc/
 PROXMOX_USER_NAME="Pulumi"
 PROXMOX_USER_ID="${PROXMOX_USER_NAME,,}@pve"
 PROXMOX_USER_PASSWORD=$(cat /dev/urandom | tr -dc a-zA-Z0-9 | head -c 20)
+echo "${PROXMOX_USER_NAME}'s password is \"${PROXMOX_USER_PASSWORD}\""
 
 pveum role add "${PROXMOX_USER_NAME}" -privs "VM.Allocate VM.Clone VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Datastore.AllocateSpace Datastore.Audit" # VM.Config.CDROM
 pveum user add "${PROXMOX_USER_ID}" -password "${PROXMOX_USER_PASSWORD}" -comment "${PROXMOX_USER_NAME} account"
