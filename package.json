@@ -6,6 +6,7 @@
         "typescript": "^5.0.0"
     },
     "dependencies": {
+        "@muhlba91/pulumi-proxmoxve": "^6.18.0",
         "@pulumi/pulumi": "^3.113.0"
     }
 }

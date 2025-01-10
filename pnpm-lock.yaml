@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@muhlba91/pulumi-proxmoxve':
+        specifier: ^6.18.0
+        version: 6.18.0(typescript@5.7.2)
       '@pulumi/pulumi':
         specifier: ^3.113.0
         version: 3.144.1(typescript@5.7.2)
@@ -43,6 +46,9 @@ packages:
   '@logdna/tail-file@2.2.0':
     resolution: {integrity: sha512-XGSsWDweP80Fks16lwkAUIr54ICyBs6PsI4mpfTLQaWgEJRtY9xEV+PeyDpJ+sJEGZxqINlpmAwe/6tS1pP8Ng==}
     engines: {node: '>=10.3.0'}
+
+  '@muhlba91/pulumi-proxmoxve@6.18.0':
+    resolution: {integrity: sha512-AlJYPYcYtGlacej/SfyXnZOe6usaO3UN+3GZ6gGaNe4klbNfuEppehmR0fzQaAN63zMZ8NIpeuyTAZz9f0TpaA==}
 
   '@npmcli/agent@2.2.2':
     resolution: {integrity: sha512-OrcNPXdpSl9UX7qPVRWbmWMCSXrcDa2M9DvrbOTj7ao1S4PlqVFYv9/yLKMkrJKZ/V5A/kDBC690or307i26Og==}
@@ -1116,6 +1122,15 @@ snapshots:
   '@js-sdsl/ordered-map@4.4.2': {}
 
   '@logdna/tail-file@2.2.0': {}
+
+  '@muhlba91/pulumi-proxmoxve@6.18.0(typescript@5.7.2)':
+    dependencies:
+      '@pulumi/pulumi': 3.144.1(typescript@5.7.2)
+    transitivePeerDependencies:
+      - bluebird
+      - supports-color
+      - ts-node
+      - typescript
 
   '@npmcli/agent@2.2.2':
     dependencies:
