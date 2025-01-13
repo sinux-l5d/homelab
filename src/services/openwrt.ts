@@ -22,9 +22,8 @@ class OpenWRT implements Service {
       const body = await res.text();
       const cs = body.split("\n")
         .map((l) => l.split(" "))
-        .filter(([_, file]) => file == "rootfs.tar.xz")
-        .at(0)
-        ?.at(0);
+        .find(([_, file]) => file === "rootfs.tar.xz")
+        ?.shift();
       if (!cs) return Promise.reject("Can't retrieve checksum");
       return cs;
     });
