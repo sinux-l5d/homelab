@@ -1,5 +1,6 @@
 name: homelab
 description: Homelab for stuffs
+main: ./src/index.ts
 runtime:
   name: nodejs
   options:

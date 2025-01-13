@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # disable suspend on lid close (laptop only)
 sed -i "s/^#HandleLidSwitch\([a-zA-Z]*\)=[a-z]*/HandleLidSwitch\1=ignore/" /etc/systemd/logind.conf
 
@@ -6,7 +8,27 @@ PROXMOX_USER_ID="${PROXMOX_USER_NAME,,}@pve"
 PROXMOX_USER_PASSWORD=$(cat /dev/urandom | tr -dc a-zA-Z0-9 | head -c 20)
 echo "${PROXMOX_USER_NAME}'s password is \"${PROXMOX_USER_PASSWORD}\""
 
-pveum role add "${PROXMOX_USER_NAME}" -privs "VM.Allocate VM.Clone VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Datastore.AllocateSpace Datastore.Audit" # VM.Config.CDROM
+ROLES=(
+    Datastore.AllocateSpace
+    Datastore.AllocateTemplate
+    Datastore.Audit
+    Sys.Audit
+    Sys.Modify
+    VM.Allocate
+    VM.Audit
+    VM.Clone
+    VM.Config.CPU
+    VM.Config.Cloudinit
+    VM.Config.Disk
+    VM.Config.HWType
+    VM.Config.Memory
+    VM.Config.Network
+    VM.Config.Options
+    VM.Monitor
+    VM.PowerMgmt
+)
+
+pveum role add "${PROXMOX_USER_NAME}" -privs "${ROLES[*]}"
 pveum user add "${PROXMOX_USER_ID}" -password "${PROXMOX_USER_PASSWORD}" -comment "${PROXMOX_USER_NAME} account"
 pveum acl modify / -user "${PROXMOX_USER_ID}" -role "${PROXMOX_USER_NAME}"
 pveum user token add "${PROXMOX_USER_ID}" "${PROXMOX_USER_NAME,,}-token" -expire 0 -privsep 0 -comment "${PROXMOX_USER_NAME} token" # privsep=0 means token has all privileged of user
