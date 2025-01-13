@@ -12,6 +12,30 @@ class OpenWRT implements Service {
     this.config = config;
   }
 
+  archive_info() {
+    let [_, version, builddate] = this.filename.exec(this._URL)!;
+    let match = this.filename.exec(this._URL)!;
+    builddate = builddate.replace("%3A", "").replace("_", "-");
+
+    const sha256file_url = this._URL.replace("rootfs.tar.xz", "SHA256SUMS");
+    const rootfs_sum = fetch(sha256file_url).then(async res => {
+      const body = await res.text();
+      const cs = body.split("\n")
+        .map((l) => l.split(" "))
+        .filter(([_, file]) => file == "rootfs.tar.xz")
+        .at(0)
+        ?.at(0);
+      if (!cs) return Promise.reject("Can't retrieve checksum");
+      return cs;
+    });
+
+    return {
+      version,
+      builddate,
+      checksum: rootfs_sum,
+    }
+  }
+
   build() {
     const internalNetwork = new proxmox.network.NetworkBridge(
       "vmbr1",
@@ -23,20 +47,44 @@ class OpenWRT implements Service {
       { provider: this.config.provider },
     );
 
-    let [_, version, builddate] = this.filename.exec(this._URL)!;
-    let match = this.filename.exec(this._URL)!;
-    builddate = builddate.replace("%3A", "").replace("_", "-");
-
+    let { version, builddate, checksum } = this.archive_info();
     const rootfs = new proxmox.download.File(
       `openwrt_${version}_${builddate}`,
       {
         url: this._URL,
+        fileName: "openwrt.tar.xz",
         checksumAlgorithm: "sha256",
-        checksum:
-          "e8b047e41fc22ddce48a0386616f45089fcd32b3043fad9f828876211b6f51bc",
+        checksum,
         contentType: "vztmpl",
         datastoreId: this.config.template_datastore,
         nodeName: this.config.node_name,
+      },
+      { provider: this.config.provider },
+    );
+
+    const container = new proxmox.ct.Container(
+      "openwrt-container",
+      {
+        nodeName: this.config.node_name,
+        started: false,
+        operatingSystem: {
+          templateFileId: rootfs.id,
+          type: "unmanaged",
+        },
+        unprivileged: true,
+        initialization: {
+          hostname: "openwrt",
+        },
+        networkInterfaces: [
+          {
+            name: "eth0",
+            bridge: "vmbr0",
+          },
+          { name: "eth1", bridge: internalNetwork.name },
+        ],
+        disk: {
+          datastoreId: this.config.data_datastore,
+        },
       },
       { provider: this.config.provider },
     );

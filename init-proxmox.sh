@@ -9,9 +9,11 @@ PROXMOX_USER_PASSWORD=$(cat /dev/urandom | tr -dc a-zA-Z0-9 | head -c 20)
 echo "${PROXMOX_USER_NAME}'s password is \"${PROXMOX_USER_PASSWORD}\""
 
 ROLES=(
+    Datastore.Allocate
     Datastore.AllocateSpace
     Datastore.AllocateTemplate
     Datastore.Audit
+    SDN.Use
     Sys.Audit
     Sys.Modify
     VM.Allocate

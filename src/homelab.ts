@@ -8,6 +8,7 @@ export type Config = {
   node_name: string;
   provider: proxmox.Provider;
   template_datastore: "local";
+  data_datastore: "local-lvm";
 }
 
 export class Homelab {
@@ -35,6 +36,7 @@ export class Homelab {
       node_name,
       provider: this._provider,
       template_datastore: "local",
+      data_datastore: "local-lvm",
     }
   }
 
