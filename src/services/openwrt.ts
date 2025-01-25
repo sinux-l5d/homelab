@@ -3,7 +3,7 @@ import { Config } from "../homelab";
 import { Service } from ".";
 
 class OpenWRT implements Service {
-  // TODO: find replacement, supposed to be deprecated
+  // images.linuxcontainers.org
   private readonly _URL = "https://fra1lxdmirror01.do.letsbuildthe.cloud/images/openwrt/23.05/amd64/default/20250112_11%3A57/rootfs.tar.xz";
   private readonly filename = /.*\/(\d+\.\d+)\/.*\/(\d{8}_\d\d%3A\d\d)\/.*/;
   private readonly config: Config;
@@ -66,6 +66,7 @@ class OpenWRT implements Service {
       {
         nodeName: this.config.node_name,
         started: false,
+        startOnBoot: false, // TODO: remove
         operatingSystem: {
           templateFileId: rootfs.id,
           type: "unmanaged",
