@@ -26,7 +26,6 @@ ROLES=(
     VM.Config.Memory
     VM.Config.Network
     VM.Config.Options
-    VM.Monitor
     VM.PowerMgmt
 )
 
@@ -38,34 +37,53 @@ pveum user token add "${PROXMOX_USER_ID}" "${PROXMOX_USER_NAME,,}-token" -expire
 # From https://github.com/community-scripts/ProxmoxVE/raw/main/misc/post-pbs-install.sh
 VERSION="$(awk -F'=' '/^VERSION_CODENAME=/{ print $NF }' /etc/os-release)"
 
-# This will set the correct sources to update and install Proxmox Backup Server.
-cat <<EOF >/etc/apt/sources.list
-deb http://deb.debian.org/debian ${VERSION} main contrib
-deb http://deb.debian.org/debian ${VERSION}-updates main contrib
-deb http://security.debian.org/debian-security ${VERSION}-security main contrib
+# This will set the correct sources to update
+cat >/etc/apt/sources.list.d/debian.sources <<EOF
+Types: deb
+URIs: http://deb.debian.org/debian
+Suites: ${VERSION} ${VERSION}-updates
+Components: main contrib
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb
+URIs: http://security.debian.org/debian-security
+Suites: ${VERSION}-security
+Components: main contrib
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 EOF
-echo 'APT::Get::Update::SourceListWarnings::NonFreeFirmware "false";' >/etc/apt/apt.conf.d/no-${VERSION}-firmware.conf
 
 # The 'pve-enterprise' repository is only available to users who have purchased a Proxmox VE subscription.
-cat <<EOF >/etc/apt/sources.list.d/pve-enterprise.list
-# deb https://enterprise.proxmox.com/debian/pve ${VERSION} pve-enterprise
-EOF
+for file in /etc/apt/sources.list.d/*.sources; do
+  if grep -q "Components:.*pve-enterprise" "$file"; then
+    rm -f "$file"
+  fi
+done
 
 # The 'pve-no-subscription' repository provides access to all of the open-source components of Proxmox VE.
-cat <<EOF >/etc/apt/sources.list.d/pve-install-repo.list
-deb http://download.proxmox.com/debian/pve ${VERSION} pve-no-subscription
+cat >/etc/apt/sources.list.d/proxmox.sources <<EOF
+Types: deb
+URIs: http://download.proxmox.com/debian/pve
+Suites: ${VERSION}
+Components: pve-no-subscription
+Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
 EOF
 
 # The 'Ceph Package Repositories' provides access to both the 'no-subscription' and 'enterprise' repositories. Correct ceph package sources.
-cat <<EOF >/etc/apt/sources.list.d/ceph.list
-# deb https://enterprise.proxmox.com/debian/ceph-quincy ${VERSION} enterprise
-# deb http://download.proxmox.com/debian/ceph-quincy ${VERSION} no-subscription
-# deb https://enterprise.proxmox.com/debian/ceph-reef ${VERSION} enterprise
-# deb http://download.proxmox.com/debian/ceph-reef ${VERSION} no-subscription
+for file in /etc/apt/sources.list.d/*.sources; do
+  if grep -q "enterprise.proxmox.com.*ceph" "$file"; then
+    rm -f "$file"
+  fi
+done
+cat >/etc/apt/sources.list.d/ceph.sources <<EOF
+Types: deb
+URIs: http://download.proxmox.com/debian/ceph-squid
+Suites: ${VERSION}
+Components: no-subscription
+Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
 EOF
 
 # This will disable the nag message reminding you to purchase a subscription every time you log in to the web interface.
-echo "DPkg::Post-Invoke { \"dpkg -V proxmox-widget-toolkit | grep -q '/proxmoxlib\.js$'; if [ \$? -eq 1 ]; then { echo 'Removing subscription nag from UI...'; sed -i '/.*data\.status.*{/{s/\!//;s/active/NoMoreNagging/}' /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js; }; fi\"; };" >/etc/apt/apt.conf.d/no-nag-script
+echo "DPkg::Post-Invoke { \"if [ -s /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js ] && ! grep -q -F 'NoMoreNagging' /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js; then echo 'Removing subscription nag from UI...'; sed -i '/data\.status/{s/\\!//;s/active/NoMoreNagging/}' /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js; fi\" };" >/etc/apt/apt.conf.d/no-nag-script
 apt --reinstall install proxmox-widget-toolkit &>/dev/null
 
 # Disable unnecessary (for my usage) high availability services.
