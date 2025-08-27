@@ -95,4 +95,7 @@ systemctl disable -q --now corosync
 apt-get update
 apt-get -y dist-upgrade
 
+apt-get install -y dnsmasq
+systemctl disable --now dnsmasq
+
 echo "Done. Please reboot now."
