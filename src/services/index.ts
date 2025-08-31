@@ -1,3 +1,3 @@
 export interface Service {
-    build(): void
+  build(): void
 }
