@@ -1,0 +1,57 @@
+#!/usr/bin/expect --
+
+set timeout -1
+
+set diskid [lindex $argv 0]
+set image [lindex $argv 1]
+
+if {$image ne ""} {
+    spawn sh -c "EDITOR=edit flasher-tool --format img --image $image"
+} else {
+    spawn sh -c "EDITOR=edit flasher-tool --format img"
+}
+
+expect "Selection:"
+send "1\r"
+
+expect "Default to install mode?"
+send "y\r"
+
+expect "Device ID to select install target device:"
+send "$diskid\r"
+
+expect "Force install even if partitions exist on the target device? (WARNING: THIS CAN CAUSE DATA LOSS!)"
+send "y\r"
+
+expect "Force reboot after install without waiting for removal of install media?"
+send "n\r"
+
+
+expect "Selection:"
+send "2\r"
+
+expect "Application selection:"
+expect "Selection:"
+send "1\r"
+
+expect "Install Incus Ceph add-on?"
+send "n\r"
+
+expect "Install Incus Linstor add-on?"
+send "n\r"
+
+
+expect "Selection:"
+send "4\r"
+
+expect ":"
+send "d\rr seed.yaml\rx\r"
+
+
+expect "Selection:"
+send "5\r"
+
+expect "Filename to write image to"
+send "incusos_custom.img\r"
+
+expect eof
