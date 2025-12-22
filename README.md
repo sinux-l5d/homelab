@@ -22,7 +22,9 @@ Before installing, Secure Boot must be in setup mode in order to enrole IncusOS 
 Once installed, from local computer containing the initial key :
 1. `incus remote add lab1 <ip>` to add the homelab to your remotes.
 2. `incus remote switch lab1` to set it as the default. If not done, add `lab1:` in every command where `[remote:]` is needed.
-3. Make sure an interface will have access to the home network by adding `.config.interfaces[n].roles = ["instances"]` in `incus admin os system network edit` as [described here](https://linuxcontainers.org/incus-os/docs/main/tutorials/network-direct-attach/).
+3. Make sure an interface will provide access to the home network to instances by adding `.config.interfaces[n].roles = ["instances"]` in `incus admin os system network edit` as [described here](https://linuxcontainers.org/incus-os/docs/main/tutorials/network-direct-attach/). Also set the correct timezone in `.config.time.timezone`, e.g. `Europe/Paris`.
+4. Get the recovery keys [as described in the documentation](https://linuxcontainers.org/incus-os/docs/main/getting-started/access/#fetching-the-encryption-recovery-key) with `incus admin os system security show > very-sensitive.yaml` and save this file some place safe.
+
 
 ## Deploying with OpenTofu
 To deploy with a local file state, just use `tofu apply`, review, and say `yes`.
