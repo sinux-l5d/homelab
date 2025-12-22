@@ -1,6 +1,7 @@
 # Project-specific files
 *.img
 seed.yaml
+*-private
 # Local .terraform directories
 .terraform/
 

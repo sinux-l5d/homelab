@@ -18,5 +18,12 @@ check-deps:
     -@{{ justfile_dir() }}/scripts/semver_le.sh 6.19.1 $(incus --version) || echo "incus must be >6.19.1"
 
 alias shutdown := poweroff
+
 poweroff:
     echo "yes" | incus admin os system poweroff
+
+reboot:
+    echo "yes" | incus admin os system reboot
+
+init-private:
+    @git clone git@github.com:sinux-l5d/homelab-private.git '{{ justfile_dir() }}/infra-private' 2> /dev/null && test -d '{{ justfile_dir() }}/infra-private' || echo "failed to clone homelab-private"

@@ -29,8 +29,7 @@ require_cmd incus
 require_cmd flasher-tool
 require_cmd yq # github.com/mikefarah/yq
 
-incus remote generate-certificate || true 2> /dev/null
-
+incus remote generate-certificate 2> /dev/null || true
 
 CRT=$(cat ~/.config/incus/client.crt) yq eval '.preseed.certificates[]
     |= select(.name == "me")
