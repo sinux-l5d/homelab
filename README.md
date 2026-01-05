@@ -27,7 +27,7 @@ Once installed, from local computer containing the initial key :
 
 
 ## Deploying with OpenTofu
-To deploy with a local file state, just use `tofu apply`, review, and say `yes`.
+To deploy with a local file state, just use `tofu apply` from a directory containing `.tf` files, review, and say `yes`.
 
 ## Accessing the web UI
 
