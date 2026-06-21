@@ -9,7 +9,7 @@ local_iso=$(find "$root_dir" -name "IncusOS_*.img" | sort | tail -n1)
 
 if [ -z "$diskid" ]; then
     echo "Usage: $0 <disk_id>"
-    echo "  disk_id: is the ID of the disk to install to, found with ls -la /dev/disk/by-id/."
+    echo "  disk_id: is the ID of the disk to install to, found with ls -la /dev/disk/by-id/. E.g. : nvme-eui.123456789"
     exit 1
 fi
 

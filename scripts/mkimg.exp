@@ -6,9 +6,9 @@ set diskid [lindex $argv 0]
 set image [lindex $argv 1]
 
 if {$image ne ""} {
-    spawn sh -c "EDITOR=edit flasher-tool --format img --image $image"
+    spawn sh -c "EDITOR=ex flasher-tool --format img --image $image"
 } else {
-    spawn sh -c "EDITOR=edit flasher-tool --format img"
+    spawn sh -c "EDITOR=ex flasher-tool --format img"
 }
 
 expect "Selection:"
@@ -45,7 +45,7 @@ expect "Selection:"
 send "4\r"
 
 expect ":"
-send "d\rr seed.yaml\rx\r"
+send "r seed.yaml\rx\r"
 
 
 expect "Selection:"
