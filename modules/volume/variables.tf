@@ -19,3 +19,21 @@ variable "create_dirs" {
     mode  = "0755"
   }
 }
+
+variable "files" {
+  description = "List of files to provision the volume with."
+  type = list(object({
+    content     = string
+    target_path = string
+    uid         = optional(number)
+    gid         = optional(number)
+    mode        = optional(string)
+  }))
+  default = []
+}
+
+variable "project" {
+  description = "Project to create the container in"
+  type        = string
+  default     = "default"
+}

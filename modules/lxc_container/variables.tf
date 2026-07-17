@@ -17,7 +17,7 @@ variable "started" {
 variable "profiles" {
   description = "Profiles to apply to the container"
   type        = list(string)
-  default     = []
+  default     = ["default"]
 }
 
 variable "env" {
@@ -42,7 +42,13 @@ variable "gpu_enabled" {
 }
 
 variable "config" {
-  description = "Configuration options for the container"
+  description = "Additionnal raw config to pass to instance"
   type        = map(string)
   default     = {}
+}
+
+variable "project" {
+  description = "Project to create the container in"
+  type        = string
+  default     = "default"
 }

@@ -1,0 +1,5 @@
+$ORIGIN home.sinux.dev.
+@         IN  SOA dns.home.sinux.dev. not.your.business ${date}01 7200 3600 172800 3600
+
+dns       IN  A   10.1.0.10
+@         IN  A   10.1.0.11

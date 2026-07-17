@@ -2,7 +2,7 @@ terraform {
   required_providers {
     incus = {
       source  = "lxc/incus"
-      version = "~>1.0.0"
+      version = ">=1.1.0"
     }
   }
 }
@@ -15,6 +15,18 @@ provider "incus" {
 
   remote {
     name    = "lab1"
-    address = "https://192.168.1.200:8443"
+    address = "https://192.168.1.199:8443"
+  }
+
+  remote {
+    name     = "docker"
+    address  = "https://docker.io"
+    protocol = "oci"
+  }
+
+  remote {
+    name     = "ghcr"
+    address  = "https://ghcr.io"
+    protocol = "oci"
   }
 }

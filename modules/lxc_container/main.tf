@@ -3,8 +3,9 @@ resource "incus_instance" "this" {
   image = var.image
   config = merge(
     { for k, v in var.env : "environment.${k}" => v },
-    var.config
+    var.config,
   )
+  project = var.project
 
   dynamic "device" {
     for_each = { for i in var.volumes : i.volume_name => i.path }

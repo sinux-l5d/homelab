@@ -17,7 +17,7 @@ variable "started" {
 variable "profiles" {
   description = "Profiles to apply to the container"
   type        = list(string)
-  default     = []
+  default     = ["default"]
 }
 
 variable "env" {
@@ -27,7 +27,7 @@ variable "env" {
 }
 
 variable "volumes" {
-  description = "Path to keep in a separate volume. key = volume name, value = path"
+  description = "Path to keep in a separate volume. `path` is where the volume in mounted in the container."
   type = list(object({
     volume_name = string
     path        = string
@@ -51,4 +51,26 @@ variable "gpu_enabled" {
   description = "Whether to enable GPU acceleration"
   type        = bool
   default     = false
+}
+
+variable "project" {
+  description = "Project to create the container in"
+  type        = string
+  default     = "default"
+}
+
+variable "config" {
+  description = "Additionnal raw config to pass to instance"
+  type        = map(string)
+  default     = {}
+}
+
+variable "ipv4" {
+  description = "Force Incus DHCP server to assigne a specific configuration"
+  type = object({
+    address = optional(string)
+    # gateway = optional(string)
+  })
+  default  = null
+  nullable = true
 }

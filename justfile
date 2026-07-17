@@ -27,3 +27,11 @@ reboot:
 
 init-private:
     @git clone git@github.com:sinux-l5d/homelab-private.git '{{ justfile_dir() }}/infra-private' 2> /dev/null && test -d '{{ justfile_dir() }}/infra-private' || echo "failed to clone homelab-private"
+
+plan dir="infra/common":
+    tofu -chdir="{{ dir }}" init
+    tofu -chdir="{{ dir }}" plan
+
+apply dir="infra/common":
+    tofu -chdir="{{ dir }}" init
+    tofu -chdir="{{ dir }}" apply -auto-approve
