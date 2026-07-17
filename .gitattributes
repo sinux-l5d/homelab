@@ -1,0 +1,2 @@
+*.secret.yaml filter=sops diff=sops
+*.tfstate filter=sops diff=sops
